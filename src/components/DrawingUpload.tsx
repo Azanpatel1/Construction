@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Upload, X, FileImage, FileType2 } from "lucide-react";
+import { Upload, X, FileImage, FileType2, Maximize2 } from "lucide-react";
 
 const ACCEPT = [
   "image/png",
@@ -31,8 +31,14 @@ export function DrawingUpload({
   resetKey,
   layout = "vertical",
 }: Props) {
-  const sizeClass =
+  // Empty dropzone stays compact; once a drawing is loaded we expand the
+  // preview so the full drawing is actually legible.
+  const emptySizeClass =
     layout === "horizontal" ? "h-44 w-full" : "aspect-[4/5] w-full";
+  const previewSizeClass =
+    layout === "horizontal"
+      ? "w-full h-[clamp(420px,62vh,720px)]"
+      : "aspect-[4/5] w-full";
   const [drawing, setDrawing] = useState<DrawingFile | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -94,7 +100,7 @@ export function DrawingUpload({
   if (drawing) {
     return (
       <div
-        className={`${sizeClass} rounded-md border border-line bg-ink-850 flex flex-col overflow-hidden`}
+        className={`${previewSizeClass} rounded-md border border-line bg-ink-850 flex flex-col overflow-hidden`}
       >
         <div className="flex items-center justify-between gap-2 px-3 py-2 border-b border-line bg-ink-800/40">
           <div className="flex items-center gap-1.5 min-w-0 text-xs text-muted">
@@ -107,14 +113,26 @@ export function DrawingUpload({
               {drawing.file.name}
             </span>
           </div>
-          <button
-            type="button"
-            onClick={clear}
-            className="p-1 rounded text-muted hover:text-text hover:bg-ink-800 transition"
-            aria-label="Remove drawing"
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
+          <div className="flex items-center gap-1">
+            <a
+              href={drawing.previewUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="p-1 rounded text-muted hover:text-text hover:bg-ink-800 transition"
+              aria-label="Open full size"
+              title="Open full size"
+            >
+              <Maximize2 className="w-3.5 h-3.5" />
+            </a>
+            <button
+              type="button"
+              onClick={clear}
+              className="p-1 rounded text-muted hover:text-text hover:bg-ink-800 transition"
+              aria-label="Remove drawing"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
         <div className="flex-1 min-h-0 relative bg-ink-800/30">
           {drawing.isPdf ? (
@@ -124,25 +142,36 @@ export function DrawingUpload({
               className="absolute inset-0 w-full h-full border-0"
             />
           ) : (
-            <img
-              src={drawing.previewUrl}
-              alt="Uploaded drawing"
-              className="absolute inset-0 w-full h-full object-contain"
-            />
+            <a
+              href={drawing.previewUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="absolute inset-0 group"
+              title="Click to open at full size"
+            >
+              <img
+                src={drawing.previewUrl}
+                alt="Uploaded drawing"
+                className="absolute inset-0 w-full h-full object-contain"
+              />
+              <span className="pointer-events-none absolute bottom-2 right-2 inline-flex items-center gap-1 rounded-md bg-ink-850/90 border border-line px-2 py-1 text-[10px] text-muted opacity-0 group-hover:opacity-100 transition">
+                <Maximize2 className="w-3 h-3" /> Open full size
+              </span>
+            </a>
           )}
         </div>
-        {locationLabel && (
-          <div className="px-3 py-2 text-xs text-muted truncate border-t border-line">
-            {locationLabel}
-          </div>
-        )}
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          className="text-xs text-gold-600 hover:text-gold-500 py-2 border-t border-line transition"
-        >
-          Replace file
-        </button>
+        <div className="flex items-center justify-between gap-3 px-3 py-2 border-t border-line">
+          <span className="text-xs text-muted truncate">
+            {locationLabel || "Click image to view at full resolution"}
+          </span>
+          <button
+            type="button"
+            onClick={() => inputRef.current?.click()}
+            className="text-xs text-gold-600 hover:text-gold-500 transition shrink-0"
+          >
+            Replace file
+          </button>
+        </div>
         <input
           ref={inputRef}
           type="file"
@@ -158,7 +187,7 @@ export function DrawingUpload({
   }
 
   return (
-    <div className={`${sizeClass} flex flex-col`}>
+    <div className={`${emptySizeClass} flex flex-col`}>
       <input
         ref={inputRef}
         type="file"
