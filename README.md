@@ -117,7 +117,7 @@ In the Cloudflare dashboard → **Workers & Pages → Create → Pages → Conne
 | Root directory | `/` |
 | Node version | `20` (set via `NODE_VERSION` env var, or read from `.nvmrc`) |
 
-A `public/_redirects` file is included so any future client-side routes fall back to `index.html`.
+SPA fallback is handled by `wrangler.jsonc` (`not_found_handling: "single-page-application"`). Do not add a `public/_redirects` file — it conflicts with Workers asset deploy and causes an infinite-loop error.
 
 No environment variables or secrets are required — the demo is fully client-side.
 
