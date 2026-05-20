@@ -1,0 +1,124 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-feature-settings: "cv11", "ss01", "ss03";
+  font-variant-numeric: tabular-nums;
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(212, 162, 76, 0.06), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(91, 168, 255, 0.05), transparent 60%),
+    #0b0e14;
+}
+
+::selection {
+  background: rgba(212, 162, 76, 0.35);
+  color: #fff;
+}
+
+/* Subtle scrollbars */
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: #222c3d;
+  border-radius: 8px;
+  border: 2px solid #0b0e14;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #2c3a50;
+}
+
+@layer components {
+  .panel {
+    @apply rounded-xl bg-ink-850/80 border border-line/70 backdrop-blur-sm shadow-panel;
+  }
+  .panel-header {
+    @apply flex items-center justify-between gap-3 px-4 py-3 border-b border-line/70;
+  }
+  .panel-title {
+    @apply text-[11px] font-semibold tracking-[0.12em] uppercase text-muted;
+  }
+  .stat-value {
+    @apply font-mono tabular-nums text-text;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[11px] font-medium tracking-wide uppercase;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-md bg-gold-500 px-4 py-2 text-sm font-semibold text-ink-950 transition hover:bg-gold-400 active:bg-gold-600 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-line/70 bg-ink-800/50 px-3 py-2 text-sm text-text/90 transition hover:bg-ink-700/70 hover:border-line;
+  }
+  .input-base {
+    @apply w-full rounded-md bg-ink-900/80 border border-line/70 px-3 py-2 text-sm text-text placeholder:text-muted/70 focus:outline-none focus:border-gold-500/70 focus:ring-1 focus:ring-gold-500/30;
+  }
+  .label-base {
+    @apply block text-[11px] font-medium tracking-wider uppercase text-muted mb-1.5;
+  }
+  .kbd {
+    @apply inline-block rounded border border-line bg-ink-800 px-1.5 py-0.5 text-[10px] font-mono text-text/90;
+  }
+}
+
+/* Range sliders */
+.archimpact-range {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 999px;
+  outline: none;
+  cursor: pointer;
+}
+.archimpact-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: #fff;
+  border: 2px solid #d4a24c;
+  box-shadow: 0 0 0 2px rgba(212, 162, 76, 0.25);
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+.archimpact-range::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+}
+.archimpact-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 999px;
+  background: #fff;
+  border: 2px solid #d4a24c;
+  cursor: pointer;
+}
+
+/* Recharts overrides */
+.recharts-cartesian-axis-tick-value {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11px;
+  fill: #6b7a93 !important;
+}
+.recharts-cartesian-grid line {
+  stroke: #1b2230 !important;
+}
+.recharts-tooltip-wrapper {
+  outline: none !important;
+}
