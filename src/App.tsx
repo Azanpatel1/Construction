@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Sidebar } from "./components/Sidebar";
 import { Header } from "./components/Header";
@@ -12,7 +12,9 @@ import { SolutionDrilldown } from "./components/SolutionDrilldown";
 import { EmptyState } from "./components/EmptyState";
 import { AnalystPanel } from "./components/AnalystPanel";
 import { AnalystResults } from "./components/AnalystResults";
-import { allScenarios, defaultConstraints } from "./lib/scenarios";
+import { useProjects } from "./hooks/useProjects";
+import { defaultConstraints } from "./lib/scenarios";
+import { defaultConstraintsForProject } from "./lib/projectFactory";
 import { analyzeScenario } from "./lib/optimizer";
 import {
   runAnalyst,
@@ -24,20 +26,28 @@ import type { AnalysisResult, Constraints, SolutionImpact } from "./lib/types";
 
 type Tab = "triage" | "cascade";
 
+function constraintsForProject(id: string): Constraints {
+  if (id === "mt-q3-24") return defaultConstraints.marriottTower;
+  if (id === "als-2024") return defaultConstraints.austinLifeSci;
+  return defaultConstraintsForProject(id);
+}
+
 function App() {
   const [tab, setTab] = useState<Tab>("triage");
-  const [activeId, setActiveId] = useState<string>(allScenarios[0].project.id);
-  const activeScenario = useMemo(
-    () =>
-      allScenarios.find((s) => s.project.id === activeId) ?? allScenarios[0],
+  const {
+    scenarios,
+    activeId,
+    activeScenario,
+    selectProject,
+    createProject,
+    deleteProject,
+    canDelete,
+  } = useProjects();
+
+  const initialConstraints = useMemo(
+    () => constraintsForProject(activeId),
     [activeId]
   );
-
-  const initialConstraints: Constraints = useMemo(() => {
-    if (activeId === allScenarios[0].project.id)
-      return defaultConstraints.marriottTower;
-    return defaultConstraints.austinLifeSci;
-  }, [activeId]);
 
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
   const [analyzedAt, setAnalyzedAt] = useState<string | null>(null);
@@ -48,6 +58,15 @@ function App() {
     scenarioToAnalystInput(activeScenario, DEFAULT_ANALYST_INPUT)
   );
   const analystOutput = useMemo(() => runAnalyst(analystInput), [analystInput]);
+
+  useEffect(() => {
+    const projectId = new URLSearchParams(window.location.search).get("project");
+    if (projectId && scenarios.some((s) => s.project.id === projectId)) {
+      selectProject(projectId);
+    }
+    // Open shared links once on load
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function runAnalysis(c: Constraints) {
     setIsAnalyzing(true);
@@ -73,20 +92,31 @@ function App() {
   }
 
   function switchScenario(id: string) {
-    setActiveId(id);
+    selectProject(id);
     setAnalysis(null);
     setAnalyzedAt(null);
     setDrilldown(null);
-    const next = allScenarios.find((s) => s.project.id === id) ?? allScenarios[0];
+    const next = scenarios.find((s) => s.project.id === id) ?? scenarios[0];
     setAnalystInput(scenarioToAnalystInput(next, DEFAULT_ANALYST_INPUT));
+  }
+
+  function handleCreateProject(name: string, location: string) {
+    const created = createProject(name, location);
+    setAnalysis(null);
+    setAnalyzedAt(null);
+    setDrilldown(null);
+    setAnalystInput(scenarioToAnalystInput(created, DEFAULT_ANALYST_INPUT));
   }
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-ink-950 text-text font-sans">
       <Sidebar
-        scenarios={allScenarios}
+        scenarios={scenarios}
         activeId={activeId}
         onSelect={switchScenario}
+        onNewProject={handleCreateProject}
+        onDeleteProject={deleteProject}
+        canDelete={canDelete}
       />
 
       <main className="flex-1 flex flex-col min-w-0">
