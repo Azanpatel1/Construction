@@ -1,38 +1,20 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Layers, Sparkles } from "lucide-react";
 import { Sidebar } from "./components/Sidebar";
 import { Header } from "./components/Header";
-import { IssuePanel } from "./components/IssuePanel";
-import { ImpactSummary } from "./components/ImpactSummary";
-import { CostWaterfall } from "./components/CostWaterfall";
-import { TimelineGantt } from "./components/TimelineGantt";
-import { CascadeGraph } from "./components/CascadeGraph";
-import { SolutionCards } from "./components/SolutionCards";
-import { SolutionDrilldown } from "./components/SolutionDrilldown";
-import { EmptyState } from "./components/EmptyState";
-import { AnalystPanel } from "./components/AnalystPanel";
-import { AnalystResults } from "./components/AnalystResults";
+import { InputPanel } from "./components/InputPanel";
+import { ResultsView } from "./components/ResultsView";
 import { useProjects } from "./hooks/useProjects";
-import { defaultConstraints } from "./lib/scenarios";
-import { defaultConstraintsForProject } from "./lib/projectFactory";
-import { analyzeScenario } from "./lib/optimizer";
 import {
-  runAnalyst,
-  DEFAULT_ANALYST_INPUT,
-  type AnalystInput,
-} from "./lib/analyst";
-import { scenarioToAnalystInput } from "./lib/scenarioMap";
-import type { AnalysisResult, Constraints, SolutionImpact } from "./lib/types";
-
-type Tab = "triage" | "cascade";
-
-function constraintsForProject(id: string): Constraints {
-  if (id === "mt-q3-24") return defaultConstraints.marriottTower;
-  return defaultConstraintsForProject(id);
-}
+  BLANK_UNIFIED_INPUT,
+  runUnifiedAnalysis,
+  unifiedInputFromScenario,
+  type UnifiedAnalysis,
+  type UnifiedInput,
+} from "./lib/runAnalysis";
 
 function App() {
-  const [tab, setTab] = useState<Tab>("triage");
   const {
     scenarios,
     activeId,
@@ -43,35 +25,25 @@ function App() {
     canDelete,
   } = useProjects();
 
-  const initialConstraints = useMemo(
-    () => constraintsForProject(activeId),
-    [activeId]
+  const [input, setInput] = useState<UnifiedInput>(() =>
+    unifiedInputFromScenario(activeScenario, BLANK_UNIFIED_INPUT)
   );
-
-  const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
+  const [analysis, setAnalysis] = useState<UnifiedAnalysis | null>(null);
   const [analyzedAt, setAnalyzedAt] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
-  const [drilldown, setDrilldown] = useState<SolutionImpact | null>(null);
-
-  const [analystInput, setAnalystInput] = useState<AnalystInput>(() =>
-    scenarioToAnalystInput(activeScenario, DEFAULT_ANALYST_INPUT)
-  );
-  const analystOutput = useMemo(() => runAnalyst(analystInput), [analystInput]);
 
   useEffect(() => {
     const projectId = new URLSearchParams(window.location.search).get("project");
     if (projectId && scenarios.some((s) => s.project.id === projectId)) {
       selectProject(projectId);
     }
-    // Open shared links once on load
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function runAnalysis(c: Constraints) {
+  function runAnalysis(final: UnifiedInput) {
     setIsAnalyzing(true);
-    setDrilldown(null);
     setTimeout(() => {
-      const result = analyzeScenario(activeScenario, c);
+      const result = runUnifiedAnalysis(activeScenario, final);
       setAnalysis(result);
       setAnalyzedAt(
         new Date().toLocaleTimeString("en-US", {
@@ -85,27 +57,36 @@ function App() {
   }
 
   function reset() {
+    setInput(unifiedInputFromScenario(activeScenario, BLANK_UNIFIED_INPUT));
     setAnalysis(null);
     setAnalyzedAt(null);
-    setDrilldown(null);
   }
 
   function switchScenario(id: string) {
     selectProject(id);
+    const next = scenarios.find((s) => s.project.id === id) ?? scenarios[0];
+    setInput(unifiedInputFromScenario(next, BLANK_UNIFIED_INPUT));
     setAnalysis(null);
     setAnalyzedAt(null);
-    setDrilldown(null);
-    const next = scenarios.find((s) => s.project.id === id) ?? scenarios[0];
-    setAnalystInput(scenarioToAnalystInput(next, DEFAULT_ANALYST_INPUT));
   }
 
   function handleCreateProject(name: string, location: string) {
     const created = createProject(name, location);
+    setInput(unifiedInputFromScenario(created, BLANK_UNIFIED_INPUT));
     setAnalysis(null);
     setAnalyzedAt(null);
-    setDrilldown(null);
-    setAnalystInput(scenarioToAnalystInput(created, DEFAULT_ANALYST_INPUT));
   }
+
+  // Header chip should follow the user's current drawing-confidence rather
+  // than the static scenario severity, so the project context reflects the
+  // active inputs (or the last analysis, once one is run).
+  const headerScenario = useMemo(() => {
+    const sev = analysis?.derivedSeverity ?? activeScenario.issue.severity;
+    return {
+      ...activeScenario,
+      issue: { ...activeScenario.issue, severity: sev },
+    };
+  }, [activeScenario, analysis]);
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-ink-950 text-text font-sans">
@@ -119,138 +100,111 @@ function App() {
       />
 
       <main className="flex-1 flex flex-col min-w-0">
-        <Header scenario={activeScenario} analyzedAt={analyzedAt} />
+        <Header scenario={headerScenario} analyzedAt={analyzedAt} />
 
         <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6">
-          {/* Tab bar */}
-          <div className="flex items-center gap-1 border-b border-line">
-            <TabButton
-              active={tab === "triage"}
-              onClick={() => setTab("triage")}
-            >
-              Triage analysis
-            </TabButton>
-            <TabButton
-              active={tab === "cascade"}
-              onClick={() => setTab("cascade")}
-            >
-              Cascade detail
-            </TabButton>
-          </div>
+          <InputPanel
+            value={input}
+            scenarioId={activeId}
+            isAnalyzing={isAnalyzing}
+            onChange={setInput}
+            onRun={runAnalysis}
+            onReset={reset}
+          />
 
           <AnimatePresence mode="wait">
-            {tab === "triage" ? (
+            {!analysis && !isAnalyzing && (
               <motion.div
-                key="triage"
+                key="empty"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.2 }}
-                className="space-y-6"
               >
-                <AnalystPanel value={analystInput} onChange={setAnalystInput} />
-                <AnalystResults output={analystOutput} />
+                <ReadyToAnalyze />
               </motion.div>
-            ) : (
+            )}
+
+            {isAnalyzing && (
               <motion.div
-                key="cascade"
+                key="loading"
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.2 }}
-                className="space-y-6"
+                className="panel p-12 flex flex-col items-center justify-center gap-3"
               >
-                <IssuePanel
-                  key={activeScenario.project.id}
-                  scenario={activeScenario}
-                  initialConstraints={initialConstraints}
-                  isAnalyzing={isAnalyzing}
-                  onRun={runAnalysis}
-                  onReset={reset}
+                <div className="flex items-center gap-2 text-gold-600 text-sm">
+                  <ThinkingDots />
+                  Running analysis
+                </div>
+                <p className="text-xs text-muted">
+                  Scoring cascade, schedule, cost, and resource posture
+                </p>
+              </motion.div>
+            )}
+
+            {analysis && !isAnalyzing && (
+              <motion.div
+                key="results"
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.2 }}
+              >
+                <ResultsView
+                  analyst={analysis.analyst}
+                  cascade={analysis.cascade}
+                  scenario={headerScenario}
                 />
-
-                {!analysis && !isAnalyzing && (
-                  <EmptyState onRun={() => runAnalysis(initialConstraints)} />
-                )}
-
-                {isAnalyzing && (
-                  <div className="panel p-12 flex flex-col items-center justify-center gap-3">
-                    <div className="flex items-center gap-2 text-gold-600 text-sm">
-                      <ThinkingDots />
-                      Analyzing cascade
-                    </div>
-                    <p className="text-xs text-muted">
-                      Scoring {activeScenario.solutions.length} mitigation paths
-                    </p>
-                  </div>
-                )}
-
-                {analysis && !isAnalyzing && (
-                  <div className="space-y-6">
-                    <ImpactSummary analysis={analysis} />
-                    <div className="grid grid-cols-2 gap-6">
-                      <CostWaterfall
-                        impact={analysis.bySolution[analysis.recommendedId]}
-                        doNothingImpact={analysis.doNothing}
-                      />
-                      <TimelineGantt
-                        scenario={activeScenario}
-                        impact={analysis.bySolution[analysis.recommendedId]}
-                      />
-                    </div>
-                    <CascadeGraph
-                      impact={analysis.bySolution[analysis.recommendedId]}
-                      doNothingImpact={analysis.doNothing}
-                    />
-                    <SolutionCards
-                      analysis={analysis}
-                      onSelect={(impact) => setDrilldown(impact)}
-                      selectedId={drilldown?.solution.id ?? null}
-                    />
-                  </div>
-                )}
               </motion.div>
             )}
           </AnimatePresence>
 
           <footer className="pt-6 pb-2 text-xs text-muted">
-            ArchImpact · Risk analyst + cascade impact model
+            ArchImpact · Output quality is bound by input quality — provide
+            accurate drawings, constraints, and uncertainties for the
+            most reliable analysis.
           </footer>
         </div>
       </main>
-
-      <SolutionDrilldown
-        impact={drilldown}
-        doNothingImpact={analysis?.doNothing ?? null}
-        onClose={() => setDrilldown(null)}
-      />
     </div>
   );
 }
 
-function TabButton({
-  active,
-  onClick,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  children: React.ReactNode;
-}) {
+function ReadyToAnalyze() {
   return (
-    <button
-      onClick={onClick}
-      className={`px-4 py-2 text-sm font-medium relative transition ${
-        active
-          ? "text-gold-600"
-          : "text-muted hover:text-text"
-      }`}
-    >
-      {children}
-      {active && (
-        <span className="absolute left-0 right-0 -bottom-px h-0.5 bg-gold-500" />
-      )}
-    </button>
+    <div className="panel p-10 flex flex-col items-center text-center max-w-2xl mx-auto">
+      <div className="p-3 rounded-full bg-ink-800 border border-line">
+        <Layers className="w-7 h-7 text-gold-500 stroke-[1.25]" />
+      </div>
+      <h2 className="mt-5 font-serif text-2xl font-semibold text-text tracking-tight">
+        Provide inputs to run the analysis
+      </h2>
+      <p className="mt-3 text-sm text-muted leading-relaxed max-w-md">
+        The dashboard generates results from the drawing, project description,
+        and constraints you provide above. Output fidelity scales directly with
+        input fidelity.
+      </p>
+      <div className="mt-6 grid grid-cols-3 gap-3 w-full max-w-md text-left">
+        <Hint step="1" label="Drawing" />
+        <Hint step="2" label="Project + risk" />
+        <Hint step="3" label="Constraints" />
+      </div>
+      <div className="mt-5 flex items-center gap-1.5 text-xs text-muted">
+        <Sparkles className="w-3.5 h-3.5 text-gold-500" />
+        Press <span className="kbd">Run analysis</span> when ready
+      </div>
+    </div>
+  );
+}
+
+function Hint({ step, label }: { step: string; label: string }) {
+  return (
+    <div className="rounded-md border border-line bg-ink-800/40 px-3 py-2">
+      <div className="text-[10px] text-muted">Step {step}</div>
+      <div className="text-xs font-medium text-text mt-0.5">{label}</div>
+    </div>
   );
 }
 
