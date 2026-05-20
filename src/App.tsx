@@ -28,7 +28,6 @@ type Tab = "triage" | "cascade";
 
 function constraintsForProject(id: string): Constraints {
   if (id === "mt-q3-24") return defaultConstraints.marriottTower;
-  if (id === "als-2024") return defaultConstraints.austinLifeSci;
   return defaultConstraintsForProject(id);
 }
 

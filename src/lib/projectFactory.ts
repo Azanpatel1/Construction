@@ -1,6 +1,6 @@
 import type { Scenario, Constraints } from "./types";
 
-export const BUILT_IN_PROJECT_IDS = new Set(["mt-q3-24", "als-2024"]);
+export const BUILT_IN_PROJECT_IDS = new Set(["mt-q3-24"]);
 
 export function isBuiltInProject(id: string): boolean {
   return BUILT_IN_PROJECT_IDS.has(id);
