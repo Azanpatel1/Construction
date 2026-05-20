@@ -8,6 +8,7 @@ import type {
 } from "./analyst";
 import { runAnalyst } from "./analyst";
 import { analyzeScenario } from "./optimizer";
+import { buildCascadeFromInput } from "./cascadeBuilder";
 import type {
   AnalysisResult,
   Constraints,
@@ -65,6 +66,11 @@ function applyConfidenceToScenario(
   input: UnifiedInput
 ): Scenario {
   const factor = 1 + (1 - input.drawingConfidence / 100) * 0.5;
+  // If the scenario only has a stub cascade (e.g. user-created project),
+  // synthesize a rich 8-node DAG from the user's risk area + project type
+  // + budget reference. Otherwise keep the hand-tuned cascade.
+  const baseCascade =
+    base.cascade.length >= 6 ? base.cascade : buildCascadeFromInput(base, input);
   return {
     ...base,
     issue: {
@@ -73,7 +79,7 @@ function applyConfidenceToScenario(
       location: input.issueLocation || base.issue.location,
       severity: severityFromConfidence(input.drawingConfidence),
     },
-    cascade: base.cascade.map((n) => ({
+    cascade: baseCascade.map((n) => ({
       ...n,
       probability: Math.max(0, Math.min(1, n.probability * factor)),
     })),
