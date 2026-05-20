@@ -1,4 +1,4 @@
-import { Play, Sparkles } from "lucide-react";
+import { Play, Layers } from "lucide-react";
 
 interface Props {
   onRun: () => void;
@@ -6,20 +6,20 @@ interface Props {
 
 export function EmptyState({ onRun }: Props) {
   return (
-    <div className="panel p-10 flex flex-col items-center text-center">
-      <div className="p-3 rounded-full bg-gold-500/10 border border-gold-500/30">
-        <Sparkles className="w-6 h-6 text-gold-500" />
+    <div className="panel p-12 flex flex-col items-center text-center max-w-xl mx-auto">
+      <div className="p-4 rounded-full bg-ink-800 border border-line">
+        <Layers className="w-8 h-8 text-gold-500 stroke-[1.25]" />
       </div>
-      <h2 className="mt-4 text-xl font-semibold text-text tracking-tight">
-        Quantify the cost of being wrong on paper.
+      <h2 className="mt-6 font-serif text-2xl font-semibold text-text tracking-tight">
+        Model the impact before it spreads
       </h2>
-      <p className="mt-2 max-w-lg text-[13px] text-muted leading-relaxed">
-        Model the downstream impact of architectural inaccuracies before they
-        hit your balance sheet. Adjust the constraints above, then run the
-        impact model to see the optimized mitigation path.
+      <p className="mt-3 text-sm text-muted leading-relaxed">
+        When a drawing doesn&apos;t match the build, costs cascade through
+        structure, MEP, schedule, and financing. Set your constraints above,
+        then run the analysis.
       </p>
-      <button onClick={onRun} className="btn-primary mt-5">
-        <Play className="w-3.5 h-3.5" /> Run impact model
+      <button onClick={onRun} className="btn-primary mt-8">
+        <Play className="w-4 h-4" /> Run analysis
       </button>
     </div>
   );

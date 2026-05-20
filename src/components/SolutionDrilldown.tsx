@@ -26,7 +26,7 @@ export function SolutionDrilldown({ impact, doNothingImpact, onClose }: Props) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-ink-950/80 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-text/20 backdrop-blur-sm"
           onClick={onClose}
         >
           <motion.div
@@ -39,10 +39,8 @@ export function SolutionDrilldown({ impact, doNothingImpact, onClose }: Props) {
           >
             <div className="panel-header">
               <div>
-                <div className="text-[10px] uppercase tracking-[0.18em] text-muted font-mono">
-                  Execution Plan
-                </div>
-                <div className="mt-1 text-lg font-semibold text-text">
+                <p className="text-xs text-muted">Execution plan</p>
+                <div className="mt-1 font-serif text-xl font-semibold text-text">
                   {impact.solution.name}
                 </div>
               </div>
@@ -86,8 +84,8 @@ export function SolutionDrilldown({ impact, doNothingImpact, onClose }: Props) {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="text-[10px] font-mono uppercase tracking-wider text-muted mb-2">
-                    Execution Steps
+                  <div className="text-xs font-medium text-muted mb-2">
+                    Steps
                   </div>
                   <ol className="space-y-2">
                     {impact.solution.steps.map((step, i) => (
@@ -95,7 +93,7 @@ export function SolutionDrilldown({ impact, doNothingImpact, onClose }: Props) {
                         key={i}
                         className="flex items-start gap-2 text-[12px] text-text/90 leading-relaxed"
                       >
-                        <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-gold-500/15 text-gold-500 text-[10px] font-mono font-semibold">
+                        <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-gold-500/10 text-gold-600 text-[10px] font-semibold">
                           {i + 1}
                         </span>
                         {step}
@@ -105,8 +103,8 @@ export function SolutionDrilldown({ impact, doNothingImpact, onClose }: Props) {
                 </div>
 
                 <div>
-                  <div className="text-[10px] font-mono uppercase tracking-wider text-muted mb-2">
-                    Cost Breakdown
+                  <div className="text-xs font-medium text-muted mb-2">
+                    Cost breakdown
                   </div>
                   <BreakdownRow
                     label="Direct remediation"
@@ -166,7 +164,7 @@ export function SolutionDrilldown({ impact, doNothingImpact, onClose }: Props) {
                   Press <kbd className="kbd">Esc</kbd> to close
                 </div>
                 <button className="btn-primary" onClick={onClose}>
-                  Lock-in path & notify ops
+                  Confirm path
                 </button>
               </div>
             </div>
@@ -193,16 +191,16 @@ function Stat({
       className={`rounded-md border px-3 py-2 ${
         highlight
           ? "border-gold-500/40 bg-gold-500/5"
-          : "border-line/60 bg-ink-900/60"
+          : "border-line bg-ink-800/50"
       }`}
     >
-      <div className="flex items-center gap-1.5 text-[9px] uppercase tracking-[0.18em] text-muted font-mono">
+      <div className="flex items-center gap-1.5 text-xs text-muted">
         {icon}
         {label}
       </div>
       <div
-        className={`mt-1 text-[14px] font-mono tabular-nums ${
-          highlight ? "text-gold-500" : "text-text"
+        className={`mt-1 text-sm tabular-nums font-medium ${
+          highlight ? "text-gold-600" : "text-text"
         }`}
       >
         {value}

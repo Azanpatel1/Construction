@@ -1,4 +1,4 @@
-import { Activity, ShieldCheck } from "lucide-react";
+import { Activity } from "lucide-react";
 import type { Scenario } from "../lib/types";
 import { formatDate, formatUSD, severityColor } from "../lib/format";
 
@@ -10,90 +10,68 @@ interface HeaderProps {
 export function Header({ scenario, analyzedAt }: HeaderProps) {
   const { project, issue } = scenario;
   return (
-    <header className="border-b border-line/60 bg-ink-900/40 px-6 py-4">
-      <div className="flex items-start justify-between gap-6">
+    <header className="border-b border-line bg-ink-850/90 px-8 py-5">
+      <div className="flex items-start justify-between gap-8">
         <div className="min-w-0">
-          <div className="flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-muted font-mono">
-            <span>{project.assetClass}</span>
-            <span className="opacity-40">/</span>
-            <span>{project.location}</span>
-            <span className="opacity-40">/</span>
-            <span className="text-text/80">{project.id.toUpperCase()}</span>
-          </div>
-          <h1 className="mt-1 text-xl font-semibold tracking-tight text-text">
+          <p className="text-xs text-muted">
+            {project.assetClass} · {project.location}
+          </p>
+          <h1 className="mt-1 font-serif text-2xl font-semibold tracking-tight text-text">
             {project.name}
           </h1>
-          <div className="mt-1.5 flex items-center gap-3">
+          <div className="mt-2 flex items-center gap-2 flex-wrap">
             <span
-              className={`chip bg-ink-800/80 border border-line/60 ${severityColor(
+              className={`chip border border-line bg-ink-800 capitalize ${severityColor(
                 issue.severity
               )}`}
             >
-              {issue.severity} severity
+              {issue.severity}
             </span>
-            <span className="text-[13px] text-text/80">{issue.title}</span>
+            <span className="text-sm text-muted">{issue.title}</span>
           </div>
         </div>
-        <div className="flex items-center gap-3 shrink-0">
-          <StatPill
-            label="Total Budget"
-            value={formatUSD(project.totalBudgetUSD)}
-          />
-          <StatPill
-            label="Daily Carry"
+        <div className="flex items-start gap-6 shrink-0">
+          <Stat label="Budget" value={formatUSD(project.totalBudgetUSD)} />
+          <Stat
+            label="Daily carry"
             value={formatUSD(project.dailyCarryingCostUSD)}
-            accent
+            highlight
           />
-          <StatPill
-            label="Sched. Completion"
+          <Stat
+            label="Completion"
             value={formatDate(project.scheduledCompletion)}
           />
-          <StatPill
-            label="Rate-Lock Expiry"
+          <Stat
+            label="Rate lock"
             value={formatDate(project.rateLockExpiry)}
           />
-          <div className="ml-2 flex items-center gap-2 text-[11px] font-mono text-muted">
-            {analyzedAt ? (
-              <>
-                <Activity className="w-3 h-3 text-signal-green animate-pulse" />
-                <span>Analyzed {analyzedAt}</span>
-              </>
-            ) : (
-              <>
-                <ShieldCheck className="w-3 h-3 text-muted/70" />
-                <span>Awaiting model run</span>
-              </>
-            )}
-          </div>
+          {analyzedAt && (
+            <div className="flex items-center gap-1.5 text-xs text-signal-green pt-1">
+              <Activity className="w-3.5 h-3.5" />
+              <span>Analyzed {analyzedAt}</span>
+            </div>
+          )}
         </div>
       </div>
     </header>
   );
 }
 
-function StatPill({
+function Stat({
   label,
   value,
-  accent = false,
+  highlight = false,
 }: {
   label: string;
   value: string;
-  accent?: boolean;
+  highlight?: boolean;
 }) {
   return (
-    <div
-      className={`rounded-md border px-3 py-1.5 ${
-        accent
-          ? "border-gold-500/40 bg-gold-500/5"
-          : "border-line/60 bg-ink-850/60"
-      }`}
-    >
-      <div className="text-[9px] uppercase tracking-[0.18em] text-muted font-mono">
-        {label}
-      </div>
+    <div className="text-right">
+      <div className="text-xs text-muted">{label}</div>
       <div
-        className={`mt-0.5 text-[13px] font-mono tabular-nums ${
-          accent ? "text-gold-500" : "text-text"
+        className={`mt-0.5 text-sm tabular-nums font-medium ${
+          highlight ? "text-gold-600" : "text-text"
         }`}
       >
         {value}

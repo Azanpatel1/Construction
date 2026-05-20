@@ -53,7 +53,7 @@ export function severityColor(sev: "low" | "medium" | "high" | "critical"): stri
     case "medium":
       return "text-signal-amber";
     case "high":
-      return "text-gold-500";
+      return "text-gold-600";
     case "critical":
       return "text-signal-red";
   }
@@ -64,16 +64,16 @@ export function categoryColor(
 ): string {
   switch (category) {
     case "structural":
-      return "#F25C5C";
+      return "#8B7355";
     case "mep":
-      return "#5BA8FF";
+      return "#5B6B7A";
     case "finishes":
-      return "#A78BFA";
+      return "#6B8F71";
     case "financing":
-      return "#D4A24C";
+      return "#B85C38";
     case "regulatory":
-      return "#F2B441";
+      return "#C4A574";
     case "schedule":
-      return "#3DD68C";
+      return "#4A7C59";
   }
 }

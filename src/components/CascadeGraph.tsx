@@ -106,17 +106,15 @@ export function CascadeGraph({ impact, doNothingImpact }: Props) {
     <div className="panel">
       <div className="panel-header">
         <div>
-          <div className="panel-title">Downstream Cascade · Bayesian Impact Graph</div>
-          <div className="text-[11px] text-muted mt-0.5">
-            Hover a node to see expected vs. unmitigated impact
-          </div>
+          <h2 className="panel-title">Downstream cascade</h2>
+          <p className="panel-subtitle">Hover a node for impact detail</p>
         </div>
-        <div className="text-[10px] font-mono text-muted">
+        <div className="text-xs text-muted">
           {impact.nodeImpacts.length} nodes · {countEdges(impact)} edges
         </div>
       </div>
       <div className="p-4 grid grid-cols-[1fr_220px] gap-4">
-        <div className="relative bg-ink-900/40 rounded-md border border-line/40 overflow-hidden">
+        <div className="relative bg-ink-800/40 rounded-md border border-line overflow-hidden">
           <svg
             viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
             preserveAspectRatio="xMidYMid meet"
@@ -133,7 +131,7 @@ export function CascadeGraph({ impact, doNothingImpact }: Props) {
                 markerHeight="6"
                 orient="auto-start-reverse"
               >
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#6B7A93" />
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#8A8580" />
               </marker>
               <marker
                 id="arrow-hot"
@@ -144,7 +142,7 @@ export function CascadeGraph({ impact, doNothingImpact }: Props) {
                 markerHeight="6"
                 orient="auto-start-reverse"
               >
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#F25C5C" />
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#C45C4A" />
               </marker>
             </defs>
             {nodes.flatMap((n) =>
@@ -159,7 +157,7 @@ export function CascadeGraph({ impact, doNothingImpact }: Props) {
                   <g key={`${pid}-${n.impact.node.id}`}>
                     <path
                       d={curvedPath(p.x, p.y, n.x, n.y)}
-                      stroke={isHot ? "#F25C5C" : probColor}
+                      stroke={isHot ? "#C45C4A" : probColor}
                       strokeWidth={isHot ? strokeWidth + 1 : strokeWidth}
                       fill="none"
                       markerEnd={isHot ? "url(#arrow-hot)" : "url(#arrow)"}
@@ -200,8 +198,8 @@ export function CascadeGraph({ impact, doNothingImpact }: Props) {
                     y={r + 14}
                     textAnchor="middle"
                     fontSize="10"
-                    fill="#E6EAF2"
-                    fontFamily="Inter, sans-serif"
+                    fill="#2C2A28"
+                    fontFamily="DM Sans, sans-serif"
                   >
                     {truncate(n.impact.node.label, 26)}
                   </text>
@@ -210,7 +208,7 @@ export function CascadeGraph({ impact, doNothingImpact }: Props) {
                     textAnchor="middle"
                     fontSize="9"
                     fontFamily="JetBrains Mono, monospace"
-                    fill="#6B7A93"
+                    fill="#8A8580"
                   >
                     p={formatPct(n.impact.effectiveProbability)} ·{" "}
                     {formatUSD(n.impact.expectedCostUSD)}
@@ -228,7 +226,7 @@ export function CascadeGraph({ impact, doNothingImpact }: Props) {
                 ? 1 - n.impact.effectiveProbability / n.doNothing.effectiveProbability
                 : 0;
             return (
-              <div className="absolute top-3 left-3 right-3 rounded-md border border-line bg-ink-900/95 backdrop-blur-sm px-3 py-2 shadow-lg pointer-events-none">
+              <div className="absolute top-3 left-3 right-3 rounded-md border border-line bg-ink-850/95 backdrop-blur-sm px-3 py-2 shadow-soft pointer-events-none">
                 <div className="flex items-center justify-between">
                   <span className="text-[12px] font-medium text-text">
                     {n.impact.node.label}
@@ -274,8 +272,8 @@ export function CascadeGraph({ impact, doNothingImpact }: Props) {
 
         {/* Category breakdown */}
         <div className="space-y-2">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-muted">
-            Expected by Domain
+          <div className="text-xs font-medium text-muted">
+            By domain
           </div>
           {byCategory.map((c) => {
             const max = byCategory[0].cost;
@@ -289,7 +287,7 @@ export function CascadeGraph({ impact, doNothingImpact }: Props) {
                     {formatUSD(c.cost)}
                   </span>
                 </div>
-                <div className="mt-1 h-1.5 rounded-sm bg-ink-900/80 overflow-hidden">
+                <div className="mt-1 h-1 rounded-full bg-ink-800 overflow-hidden">
                   <div
                     className="h-full"
                     style={{ width: `${pct}%`, background: color }}
@@ -310,9 +308,9 @@ function curvedPath(x1: number, y1: number, x2: number, y2: number): string {
 }
 
 function edgeColor(prob: number): string {
-  if (prob > 0.5) return "#F25C5C";
-  if (prob > 0.25) return "#F2B441";
-  return "#6B7A93";
+  if (prob > 0.5) return "#C45C4A";
+  if (prob > 0.25) return "#B8956B";
+  return "#D4CFC6";
 }
 
 function truncate(s: string, n: number): string {

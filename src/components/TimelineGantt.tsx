@@ -7,11 +7,11 @@ interface Props {
 }
 
 const phaseColor: Record<string, string> = {
-  structural: "#5BA8FF",
-  mep: "#A78BFA",
-  envelope: "#D4A24C",
-  finishes: "#3DD68C",
-  commissioning: "#F2B441",
+  structural: "#8B7355",
+  mep: "#5B6B7A",
+  envelope: "#B8956B",
+  finishes: "#6B8F71",
+  commissioning: "#C4A574",
 };
 
 export function TimelineGantt({ scenario, impact }: Props) {
@@ -56,17 +56,15 @@ export function TimelineGantt({ scenario, impact }: Props) {
     <div className="panel">
       <div className="panel-header">
         <div>
-          <div className="panel-title">Schedule · Critical Path Impact</div>
-          <div className="text-[11px] text-muted mt-0.5">
-            Baseline activities with projected slip overlay
-          </div>
+          <h2 className="panel-title">Schedule</h2>
+          <p className="panel-subtitle">Critical path and projected slip</p>
         </div>
-        <div className="flex items-center gap-3 text-[10px] font-mono">
-          <LegendBar color="#5BA8FF" label="Structural" />
-          <LegendBar color="#A78BFA" label="MEP" />
-          <LegendBar color="#D4A24C" label="Envelope" />
-          <LegendBar color="#3DD68C" label="Finishes" />
-          <LegendBar color="#F2B441" label="Commission" />
+        <div className="flex items-center gap-3 text-xs text-muted flex-wrap">
+          <LegendBar color="#8B7355" label="Structure" />
+          <LegendBar color="#5B6B7A" label="MEP" />
+          <LegendBar color="#B8956B" label="Envelope" />
+          <LegendBar color="#6B8F71" label="Finishes" />
+          <LegendBar color="#C4A574" label="Commission" />
         </div>
       </div>
       <div className="p-4">
@@ -74,7 +72,7 @@ export function TimelineGantt({ scenario, impact }: Props) {
           {/* Critical-path slip band overlay */}
           {slipDays > 0 && (
             <div
-              className="absolute top-0 bottom-6 bg-signal-red/8 border-l border-r border-signal-red/40"
+              className="absolute top-0 bottom-6 bg-signal-red/5 border-l border-r border-signal-red/25"
               style={{
                 left: `calc(${baselineEndPct}% + 88px)`,
                 width: `calc(${slipEndPct - baselineEndPct}% - 0px)`,
@@ -84,12 +82,12 @@ export function TimelineGantt({ scenario, impact }: Props) {
 
           {/* Rate-lock vertical marker */}
           <div
-            className="absolute top-0 bottom-6 border-l border-dashed border-gold-500/50"
+            className="absolute top-0 bottom-6 border-l border-dashed border-gold-500/40"
             style={{ left: `calc(${lockPct}% + 88px)` }}
             title="Rate-lock expiry"
           >
-            <div className="absolute -top-3 -translate-x-1/2 text-[9px] font-mono uppercase tracking-wider text-gold-500 bg-ink-950 px-1">
-              Rate-lock
+            <div className="absolute -top-3 -translate-x-1/2 text-[10px] text-gold-600 bg-ink-850 px-1">
+              Rate lock
             </div>
           </div>
 
@@ -100,10 +98,10 @@ export function TimelineGantt({ scenario, impact }: Props) {
               const widthPct = (a.durationDays / totalWithSlip) * 100;
               return (
                 <div key={a.id} className="flex items-center gap-3">
-                  <div className="w-[80px] shrink-0 text-[11px] text-text/80 truncate font-mono">
+                  <div className="w-[80px] shrink-0 text-xs text-text truncate">
                     {a.label}
                   </div>
-                  <div className="relative flex-1 h-5 bg-ink-900/60 rounded-sm border border-line/40">
+                  <div className="relative flex-1 h-5 bg-ink-800/80 rounded-sm border border-line">
                     <div
                       className="absolute top-0 bottom-0 rounded-sm"
                       style={{
@@ -117,7 +115,7 @@ export function TimelineGantt({ scenario, impact }: Props) {
                       }}
                     >
                       {widthPct > 6 && (
-                        <span className="absolute inset-0 flex items-center justify-center text-[9px] font-mono text-ink-950 font-semibold">
+                        <span className="absolute inset-0 flex items-center justify-center text-[10px] text-white font-medium">
                           {a.durationDays}d
                         </span>
                       )}
@@ -134,18 +132,18 @@ export function TimelineGantt({ scenario, impact }: Props) {
           {/* Slip overlay row */}
           {slipDays > 0 && (
             <div className="flex items-center gap-3 mt-2 pt-2 border-t border-line/40">
-              <div className="w-[80px] shrink-0 text-[11px] font-mono text-signal-red">
-                Δ Slip
+              <div className="w-[80px] shrink-0 text-xs text-signal-red font-medium">
+                Slip
               </div>
               <div className="relative flex-1 h-5">
                 <div
-                  className="absolute top-0 bottom-0 rounded-sm bg-signal-red/30 border border-signal-red/60 flex items-center justify-center"
+                  className="absolute top-0 bottom-0 rounded-sm bg-signal-red/15 border border-signal-red/30 flex items-center justify-center"
                   style={{
                     left: `${baselineEndPct}%`,
                     width: `${slipEndPct - baselineEndPct}%`,
                   }}
                 >
-                  <span className="text-[10px] font-mono text-signal-red font-semibold">
+                  <span className="text-xs text-signal-red font-medium">
                     +{slipDays}d
                   </span>
                 </div>
@@ -158,7 +156,7 @@ export function TimelineGantt({ scenario, impact }: Props) {
             {ticks.map((t, i) => (
               <div
                 key={i}
-                className="absolute top-0 -translate-x-1/2 text-[9px] font-mono text-muted"
+                className="absolute top-0 -translate-x-1/2 text-[10px] text-muted"
                 style={{ left: `${(t.dayIdx / totalWithSlip) * 100}%` }}
               >
                 {t.label}
@@ -218,11 +216,9 @@ function Metric({
       ? "text-signal-amber"
       : "text-text";
   return (
-    <div className="rounded-md bg-ink-900/50 border border-line/40 px-3 py-2">
-      <div className="text-[9px] uppercase tracking-[0.18em] text-muted font-mono">
-        {label}
-      </div>
-      <div className={`mt-0.5 text-[12px] font-mono tabular-nums ${toneClass}`}>
+    <div className="rounded-md bg-ink-800/50 border border-line px-3 py-2">
+      <div className="text-xs text-muted">{label}</div>
+      <div className={`mt-0.5 text-sm tabular-nums font-medium ${toneClass}`}>
         {value}
       </div>
     </div>

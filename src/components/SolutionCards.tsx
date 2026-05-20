@@ -41,13 +41,11 @@ export function SolutionCards({ analysis, onSelect, selectedId }: Props) {
     <div className="panel">
       <div className="panel-header">
         <div>
-          <div className="panel-title">Mitigation Options · Ranked by Impact</div>
-          <div className="text-[11px] text-muted mt-0.5">
-            Click any option to drill into the execution plan
-          </div>
+          <h2 className="panel-title">Mitigation options</h2>
+          <p className="panel-subtitle">Ranked by total impact — click for detail</p>
         </div>
-        <div className="text-[10px] font-mono text-muted">
-          Recommended: <span className="text-gold-500">
+        <div className="text-xs text-muted">
+          Best fit: <span className="text-gold-600 font-medium">
             {analysis.bySolution[analysis.recommendedId].solution.name}
           </span>
         </div>
@@ -67,9 +65,9 @@ export function SolutionCards({ analysis, onSelect, selectedId }: Props) {
               onClick={() => onSelect(impact)}
               whileHover={{ y: -2 }}
               transition={{ type: "spring", stiffness: 400, damping: 26 }}
-              className={`text-left rounded-lg border bg-ink-850/70 p-4 transition ${
-                isRecommended ? accent.ring : "border-line/60 hover:border-line"
-              } ${isSelected ? "ring-2 ring-gold-500/50" : ""}`}
+              className={`text-left rounded-lg border bg-ink-850 p-4 transition ${
+                isRecommended ? accent.ring : "border-line hover:border-ink-600 hover:shadow-panel"
+              } ${isSelected ? "ring-2 ring-gold-500/30" : ""}`}
             >
               <div className="flex items-center justify-between">
                 <span
@@ -119,7 +117,7 @@ export function SolutionCards({ analysis, onSelect, selectedId }: Props) {
                 />
               </div>
 
-              <div className="mt-3 flex items-center justify-between text-[10px] text-muted font-mono">
+              <div className="mt-3 flex items-center justify-between text-xs text-muted">
                 <div className="flex items-center gap-1">
                   <Users className="w-3 h-3" /> {impact.solution.crewRequired} FTE
                 </div>
@@ -153,11 +151,9 @@ function Cell({
       ? "text-signal-red"
       : "text-text";
   return (
-    <div className="rounded-md bg-ink-900/60 border border-line/40 px-2 py-1.5">
-      <div className="text-[9px] uppercase tracking-wider text-muted font-mono">
-        {label}
-      </div>
-      <div className={`mt-0.5 text-[12px] font-mono tabular-nums ${toneClass}`}>
+    <div className="rounded-md bg-ink-800/60 border border-line px-2 py-1.5">
+      <div className="text-[10px] text-muted">{label}</div>
+      <div className={`mt-0.5 text-xs tabular-nums font-medium ${toneClass}`}>
         {value}
       </div>
     </div>

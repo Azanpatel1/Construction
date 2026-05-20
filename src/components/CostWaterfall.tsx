@@ -37,15 +37,13 @@ export function CostWaterfall({ impact, doNothingImpact }: Props) {
     <div className="panel">
       <div className="panel-header">
         <div>
-          <div className="panel-title">Cost Waterfall · Recommended Path</div>
-          <div className="text-[11px] text-muted mt-0.5">
-            Direct remediation + expected downstream cascade + financing
-          </div>
+          <h2 className="panel-title">Cost breakdown</h2>
+          <p className="panel-subtitle">Direct fix, cascade, and financing</p>
         </div>
-        <div className="flex items-center gap-3 text-[10px] font-mono">
-          <LegendDot color="#F25C5C" label="Outflow" />
-          <LegendDot color="#3DD68C" label="Savings" />
-          <LegendDot color="#D4A24C" label="Total" />
+        <div className="flex items-center gap-4 text-xs text-muted">
+          <LegendDot color="#C45C4A" label="Outflow" />
+          <LegendDot color="#4A7C59" label="Savings" />
+          <LegendDot color="#B85C38" label="Total" />
         </div>
       </div>
       <div className="p-4 pt-2 h-[300px]">
@@ -59,17 +57,17 @@ export function CostWaterfall({ impact, doNothingImpact }: Props) {
               axisLine={false}
               tickLine={false}
               interval={0}
-              tick={{ fontSize: 10, fill: "#6B7A93" }}
+              tick={{ fontSize: 11, fill: "#8A8580" }}
             />
             <YAxis
               axisLine={false}
               tickLine={false}
               tickFormatter={(v) => formatUSD(v)}
               domain={[0, Math.ceil(maxY * 1.15)]}
-              tick={{ fontSize: 10, fill: "#6B7A93" }}
+              tick={{ fontSize: 11, fill: "#8A8580" }}
             />
             <Tooltip
-              cursor={{ fill: "rgba(212,162,76,0.04)" }}
+              cursor={{ fill: "rgba(184,92,56,0.06)" }}
               content={<WaterfallTooltip />}
             />
             {/* Invisible "from" base */}
@@ -166,13 +164,13 @@ function buildBuckets(
 function colorForKind(kind: Bucket["kind"]): string {
   switch (kind) {
     case "increase":
-      return "#F25C5C";
+      return "#C45C4A";
     case "decrease":
-      return "#3DD68C";
+      return "#4A7C59";
     case "total":
-      return "#D4A24C";
+      return "#B85C38";
     case "savings":
-      return "#3DD68C";
+      return "#4A7C59";
   }
 }
 
@@ -181,11 +179,9 @@ function WaterfallTooltip({ active, payload }: any) {
   const d = payload[0]?.payload as Bucket | undefined;
   if (!d) return null;
   return (
-    <div className="rounded-md border border-line/80 bg-ink-900/95 px-3 py-2 shadow-lg">
-      <div className="text-[10px] uppercase tracking-wider text-muted font-mono">
-        {d.name}
-      </div>
-      <div className="mt-0.5 text-sm font-mono tabular-nums text-text">
+    <div className="rounded-md border border-line bg-ink-850 px-3 py-2 shadow-soft">
+      <div className="text-xs text-muted">{d.name}</div>
+      <div className="mt-0.5 text-sm tabular-nums text-text font-medium">
         {formatUSD(d.valueUSD, { compact: false })}
       </div>
     </div>

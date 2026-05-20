@@ -16,16 +16,16 @@ export function ImpactSummary({ analysis }: Props) {
       : 0;
 
   return (
-    <div className="grid grid-cols-4 gap-3">
+    <div className="grid grid-cols-4 gap-4">
       <SummaryCard
         title="Exposure if no action"
         value={formatUSD(doNothing.totalImpactUSD)}
-        subtitle={`${Math.round(doNothing.netScheduleSlipDays)}d expected slip`}
+        subtitle={`${Math.round(doNothing.netScheduleSlipDays)} days slip`}
         tone="bad"
         icon={<AlertOctagon className="w-4 h-4" />}
       />
       <SummaryCard
-        title="Recommended path cost"
+        title="Recommended path"
         value={formatUSD(recommended.totalImpactUSD)}
         subtitle={recommended.solution.name}
         tone="neutral"
@@ -34,7 +34,7 @@ export function ImpactSummary({ analysis }: Props) {
       <SummaryCard
         title="Capital preserved"
         value={formatUSD(recommended.savingsVsDoNothingUSD)}
-        subtitle={`${formatPct(savingsPct)} vs. do-nothing`}
+        subtitle={`${formatPct(savingsPct)} vs. deferring`}
         tone="good"
         icon={<TrendingUp className="w-4 h-4" />}
       />
@@ -68,26 +68,24 @@ function SummaryCard({
       : tone === "bad"
       ? "text-signal-red"
       : "text-text";
-  const iconBg =
+  const iconClass =
     tone === "good"
-      ? "bg-signal-green/10 text-signal-green"
+      ? "text-signal-green"
       : tone === "bad"
-      ? "bg-signal-red/10 text-signal-red"
-      : "bg-gold-500/10 text-gold-500";
+      ? "text-signal-red"
+      : "text-gold-500";
   return (
-    <div className="panel p-4">
-      <div className="flex items-start justify-between">
-        <div className="text-[10px] uppercase tracking-[0.18em] text-muted font-mono">
-          {title}
-        </div>
-        <div className={`p-1.5 rounded-md ${iconBg}`}>{icon}</div>
+    <div className="panel p-5">
+      <div className="flex items-start justify-between gap-2">
+        <span className="text-xs text-muted leading-snug">{title}</span>
+        <span className={iconClass}>{icon}</span>
       </div>
       <div
-        className={`mt-2 text-2xl font-mono tabular-nums font-semibold ${valueClass}`}
+        className={`mt-3 text-2xl tabular-nums font-semibold font-serif ${valueClass}`}
       >
         {value}
       </div>
-      <div className="mt-1 text-[11px] text-muted">{subtitle}</div>
+      <p className="mt-1 text-xs text-muted">{subtitle}</p>
     </div>
   );
 }

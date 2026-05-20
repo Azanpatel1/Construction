@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 html,
@@ -14,110 +14,107 @@ body,
 }
 
 body {
-  font-feature-settings: "cv11", "ss01", "ss03";
+  font-feature-settings: "cv11", "ss01";
   font-variant-numeric: tabular-nums;
-  background:
-    radial-gradient(1200px 600px at 80% -10%, rgba(212, 162, 76, 0.06), transparent 60%),
-    radial-gradient(900px 500px at -10% 110%, rgba(91, 168, 255, 0.05), transparent 60%),
-    #0b0e14;
+  background-color: #faf9f7;
+  background-image:
+    linear-gradient(rgba(44, 42, 40, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(44, 42, 40, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 ::selection {
-  background: rgba(212, 162, 76, 0.35);
-  color: #fff;
+  background: rgba(184, 92, 56, 0.18);
+  color: #1c1b19;
 }
 
-/* Subtle scrollbars */
 *::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 *::-webkit-scrollbar-track {
   background: transparent;
 }
 *::-webkit-scrollbar-thumb {
-  background: #222c3d;
-  border-radius: 8px;
-  border: 2px solid #0b0e14;
+  background: #d4cfc6;
+  border-radius: 4px;
 }
 *::-webkit-scrollbar-thumb:hover {
-  background: #2c3a50;
+  background: #c4beb4;
 }
 
 @layer components {
   .panel {
-    @apply rounded-xl bg-ink-850/80 border border-line/70 backdrop-blur-sm shadow-panel;
+    @apply rounded-lg bg-ink-850 border border-line shadow-panel;
   }
   .panel-header {
-    @apply flex items-center justify-between gap-3 px-4 py-3 border-b border-line/70;
+    @apply flex items-center justify-between gap-3 px-5 py-4 border-b border-line;
   }
   .panel-title {
-    @apply text-[11px] font-semibold tracking-[0.12em] uppercase text-muted;
+    @apply font-serif text-base font-semibold text-text tracking-tight;
+  }
+  .panel-subtitle {
+    @apply text-sm text-muted mt-0.5 font-normal;
   }
   .stat-value {
-    @apply font-mono tabular-nums text-text;
+    @apply tabular-nums text-text;
   }
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-md px-2 py-0.5 text-[11px] font-medium tracking-wide uppercase;
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium;
   }
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-md bg-gold-500 px-4 py-2 text-sm font-semibold text-ink-950 transition hover:bg-gold-400 active:bg-gold-600 disabled:cursor-not-allowed disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-md bg-gold-500 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-gold-600 active:bg-gold-600 disabled:cursor-not-allowed disabled:opacity-50;
   }
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-md border border-line/70 bg-ink-800/50 px-3 py-2 text-sm text-text/90 transition hover:bg-ink-700/70 hover:border-line;
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-line bg-ink-850 px-4 py-2 text-sm text-text transition hover:bg-ink-800 hover:border-ink-600;
   }
   .input-base {
-    @apply w-full rounded-md bg-ink-900/80 border border-line/70 px-3 py-2 text-sm text-text placeholder:text-muted/70 focus:outline-none focus:border-gold-500/70 focus:ring-1 focus:ring-gold-500/30;
+    @apply w-full rounded-md bg-ink-850 border border-line px-3 py-2 text-sm text-text placeholder:text-muted/60 focus:outline-none focus:border-gold-500/50 focus:ring-2 focus:ring-gold-500/10;
   }
   .label-base {
-    @apply block text-[11px] font-medium tracking-wider uppercase text-muted mb-1.5;
+    @apply block text-xs font-medium text-muted mb-1.5;
   }
   .kbd {
-    @apply inline-block rounded border border-line bg-ink-800 px-1.5 py-0.5 text-[10px] font-mono text-text/90;
+    @apply inline-block rounded border border-line bg-ink-800 px-1.5 py-0.5 text-xs text-muted;
   }
 }
 
-/* Range sliders */
 .archimpact-range {
   -webkit-appearance: none;
   appearance: none;
-  height: 4px;
+  height: 3px;
   border-radius: 999px;
   outline: none;
   cursor: pointer;
+  background: #e8e4dd;
 }
 .archimpact-range::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border-radius: 999px;
   background: #fff;
-  border: 2px solid #d4a24c;
-  box-shadow: 0 0 0 2px rgba(212, 162, 76, 0.25);
+  border: 2px solid #b85c38;
+  box-shadow: 0 1px 3px rgba(44, 42, 40, 0.12);
   cursor: pointer;
-  transition: transform 0.1s ease;
-}
-.archimpact-range::-webkit-slider-thumb:hover {
-  transform: scale(1.1);
 }
 .archimpact-range::-moz-range-thumb {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border-radius: 999px;
   background: #fff;
-  border: 2px solid #d4a24c;
+  border: 2px solid #b85c38;
   cursor: pointer;
 }
 
-/* Recharts overrides */
 .recharts-cartesian-axis-tick-value {
-  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-family: "DM Sans", sans-serif;
   font-size: 11px;
-  fill: #6b7a93 !important;
+  fill: #8a8580 !important;
 }
 .recharts-cartesian-grid line {
-  stroke: #1b2230 !important;
+  stroke: #e8e4dd !important;
 }
 .recharts-tooltip-wrapper {
   outline: none !important;

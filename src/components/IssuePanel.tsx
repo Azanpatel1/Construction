@@ -30,11 +30,9 @@ export function IssuePanel({
   return (
     <div className="panel">
       <div className="panel-header">
-        <div className="flex items-center gap-2">
-          <span className="panel-title">Issue Definition</span>
-          <span className="chip border border-line/60 bg-ink-800/60 text-muted">
-            Step 1 of 2
-          </span>
+        <div>
+          <h2 className="panel-title">Issue</h2>
+          <p className="panel-subtitle">Describe the discrepancy and constraints</p>
         </div>
         <button
           onClick={() => setExpanded((e) => !e)}
@@ -50,7 +48,7 @@ export function IssuePanel({
       </div>
 
       {expanded && (
-        <div className="p-4 space-y-4">
+        <div className="p-5 space-y-5">
           {/* Drawing thumbnail placeholder */}
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-3">
@@ -96,11 +94,9 @@ export function IssuePanel({
 
           <div className="h-px bg-line/60" />
 
-          <div className="flex items-center justify-between">
-            <span className="panel-title">Constraints</span>
-            <span className="text-[10px] font-mono text-muted">
-              Adjust to re-run the impact model
-            </span>
+          <div>
+            <h3 className="text-sm font-medium text-text">Constraints</h3>
+            <p className="text-xs text-muted mt-0.5">Adjust and re-run the analysis</p>
           </div>
 
           <div className="grid grid-cols-2 gap-x-6 gap-y-4">
@@ -159,7 +155,7 @@ export function IssuePanel({
               type="button"
             >
               <Play className="w-3.5 h-3.5" />
-              {isAnalyzing ? "Running model..." : "Run impact model"}
+              {isAnalyzing ? "Analyzing…" : "Run analysis"}
             </button>
           </div>
         </div>
@@ -196,7 +192,7 @@ function SliderField({
           {hint && (
             <span className="text-[10px] font-mono text-muted">{hint}</span>
           )}
-          <span className="text-[12px] font-mono tabular-nums text-gold-500">
+          <span className="text-sm tabular-nums text-gold-600 font-medium">
             {format(value)}
           </span>
         </div>
@@ -211,7 +207,7 @@ function SliderField({
         className="archimpact-range w-full"
         style={
           {
-            background: `linear-gradient(to right, #D4A24C 0%, #D4A24C ${pct}%, #2A3344 ${pct}%, #2A3344 100%)`,
+            background: `linear-gradient(to right, #B85C38 0%, #B85C38 ${pct}%, #E8E4DD ${pct}%, #E8E4DD 100%)`,
           } as React.CSSProperties
         }
       />
@@ -235,7 +231,7 @@ function Toggle({
       }`}
     >
       <span
-        className={`inline-block h-4 w-4 transform rounded-full bg-ink-950 transition ${
+        className={`inline-block h-4 w-4 transform rounded-full bg-white transition ${
           value ? "translate-x-4" : "translate-x-0.5"
         }`}
       />
@@ -245,8 +241,8 @@ function Toggle({
 
 function DrawingThumbnail({ title }: { title: string }) {
   return (
-    <div className="aspect-[4/5] rounded-md border border-line/70 bg-gradient-to-br from-ink-900 to-ink-850 p-3 flex flex-col">
-      <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-wider text-muted">
+    <div className="aspect-[4/5] rounded-md border border-line bg-ink-800/50 p-3 flex flex-col">
+      <div className="flex items-center gap-1.5 text-xs text-muted">
         <FileImage className="w-3 h-3" /> A-201
       </div>
       <div className="flex-1 grid place-items-center relative overflow-hidden">
@@ -266,7 +262,7 @@ function DrawingThumbnail({ title }: { title: string }) {
               <path
                 d="M 10 0 L 0 0 0 10"
                 fill="none"
-                stroke="#2A3344"
+                stroke="#E5E2DC"
                 strokeWidth="0.5"
               />
             </pattern>
@@ -278,28 +274,28 @@ function DrawingThumbnail({ title }: { title: string }) {
             y="22"
             width="84"
             height="96"
-            stroke="#6B7A93"
+            stroke="#8A8580"
             strokeWidth="1"
-            fill="rgba(20,27,38,0.4)"
+            fill="rgba(250,249,247,0.8)"
           />
           {/* Columns */}
           {[28, 48, 68, 88].map((x) => (
             <g key={x}>
-              <rect x={x - 2} y="30" width="4" height="4" fill="#6B7A93" />
-              <rect x={x - 2} y="56" width="4" height="4" fill="#6B7A93" />
-              <rect x={x - 2} y="82" width="4" height="4" fill="#6B7A93" />
-              <rect x={x - 2} y="108" width="4" height="4" fill="#6B7A93" />
+              <rect x={x - 2} y="30" width="4" height="4" fill="#8A8580" />
+              <rect x={x - 2} y="56" width="4" height="4" fill="#8A8580" />
+              <rect x={x - 2} y="82" width="4" height="4" fill="#8A8580" />
+              <rect x={x - 2} y="108" width="4" height="4" fill="#8A8580" />
             </g>
           ))}
           {/* Misaligned columns highlighted */}
           <g>
-            <rect x="52" y="54" width="4" height="4" fill="#F25C5C" />
-            <rect x="72" y="54" width="4" height="4" fill="#F25C5C" />
+            <rect x="52" y="54" width="4" height="4" fill="#C45C4A" />
+            <rect x="72" y="54" width="4" height="4" fill="#C45C4A" />
             <circle
               cx="64"
               cy="56"
               r="12"
-              stroke="#F25C5C"
+              stroke="#C45C4A"
               strokeWidth="1"
               fill="none"
               strokeDasharray="2 2"
@@ -309,13 +305,13 @@ function DrawingThumbnail({ title }: { title: string }) {
               y1="56"
               x2="98"
               y2="40"
-              stroke="#F25C5C"
+              stroke="#C45C4A"
               strokeWidth="0.5"
             />
             <text
               x="100"
               y="40"
-              fill="#F25C5C"
+              fill="#C45C4A"
               fontSize="5"
               fontFamily="monospace"
             >
@@ -324,7 +320,7 @@ function DrawingThumbnail({ title }: { title: string }) {
           </g>
         </svg>
       </div>
-      <div className="text-[9px] font-mono text-muted truncate">
+      <div className="text-xs text-muted truncate">
         {title}
       </div>
     </div>

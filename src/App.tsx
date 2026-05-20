@@ -36,7 +36,6 @@ function App() {
   function runAnalysis(c: Constraints) {
     setIsAnalyzing(true);
     setDrilldown(null);
-    // Brief "thinking" pause so the demo lands. Synchronous compute would be jarring.
     setTimeout(() => {
       const result = analyzeScenario(activeScenario, c);
       setAnalysis(result);
@@ -44,7 +43,6 @@ function App() {
         new Date().toLocaleTimeString("en-US", {
           hour: "2-digit",
           minute: "2-digit",
-          second: "2-digit",
           hour12: false,
         })
       );
@@ -76,7 +74,7 @@ function App() {
       <main className="flex-1 flex flex-col min-w-0">
         <Header scenario={activeScenario} analyzedAt={analyzedAt} />
 
-        <div className="flex-1 overflow-y-auto p-6 space-y-5">
+        <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6">
           <IssuePanel
             key={activeScenario.project.id}
             scenario={activeScenario}
@@ -105,15 +103,15 @@ function App() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="panel p-10 flex flex-col items-center justify-center gap-3"
+                className="panel p-12 flex flex-col items-center justify-center gap-3"
               >
-                <div className="flex items-center gap-2 text-gold-500 text-[11px] font-mono uppercase tracking-[0.18em]">
+                <div className="flex items-center gap-2 text-gold-600 text-sm">
                   <ThinkingDots />
-                  Solving cascade graph
+                  Analyzing cascade
                 </div>
-                <div className="text-[12px] text-muted font-mono">
-                  Computing noisy-OR probabilities · scoring {activeScenario.solutions.length} solutions
-                </div>
+                <p className="text-xs text-muted">
+                  Scoring {activeScenario.solutions.length} mitigation paths
+                </p>
               </motion.div>
             )}
 
@@ -123,10 +121,10 @@ function App() {
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35 }}
-                className="space-y-5"
+                className="space-y-6"
               >
                 <ImpactSummary analysis={analysis} />
-                <div className="grid grid-cols-2 gap-5">
+                <div className="grid grid-cols-2 gap-6">
                   <CostWaterfall
                     impact={analysis.bySolution[analysis.recommendedId]}
                     doNothingImpact={analysis.doNothing}
@@ -149,13 +147,8 @@ function App() {
             )}
           </AnimatePresence>
 
-          <footer className="pt-4 pb-2 flex items-center justify-between text-[10px] font-mono uppercase tracking-[0.18em] text-muted">
-            <div>ArchImpact · Construction Risk Underwriting · Demo build</div>
-            <div className="flex items-center gap-3">
-              <span>Bayesian cascade engine v0.1</span>
-              <span className="opacity-50">·</span>
-              <span>Calibrated to RSMeans 2025</span>
-            </div>
+          <footer className="pt-6 pb-2 text-xs text-muted">
+            ArchImpact · Cascade impact model
           </footer>
         </div>
       </main>
@@ -175,7 +168,7 @@ function ThinkingDots() {
       {[0, 1, 2].map((i) => (
         <motion.span
           key={i}
-          className="inline-block w-1 h-1 rounded-full bg-gold-500"
+          className="inline-block w-1.5 h-1.5 rounded-full bg-gold-500"
           animate={{ opacity: [0.3, 1, 0.3] }}
           transition={{
             repeat: Infinity,
