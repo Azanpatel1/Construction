@@ -57,47 +57,46 @@ export function IssuePanel({
 
       {expanded && (
         <div className="p-5 space-y-5">
-          <div className="grid grid-cols-12 gap-4">
-            <div className="col-span-3">
+          <div className="space-y-4">
+            <div>
               <label className="label-base">Drawing</label>
               <DrawingUpload
+                layout="horizontal"
                 resetKey={`${scenario.project.id}-${uploadKey}`}
                 locationLabel={scenario.issue.location}
               />
             </div>
-            <div className="col-span-9 space-y-3">
+            <div>
+              <label className="label-base">Issue description</label>
+              <textarea
+                className="input-base h-[88px] resize-none leading-relaxed"
+                value={issueText}
+                onChange={(e) => setIssueText(e.target.value)}
+              />
+            </div>
+            <div className="grid grid-cols-3 gap-3">
               <div>
-                <label className="label-base">Issue Description</label>
-                <textarea
-                  className="input-base h-[88px] resize-none leading-relaxed"
-                  value={issueText}
-                  onChange={(e) => setIssueText(e.target.value)}
+                <label className="label-base">Location</label>
+                <input
+                  className="input-base"
+                  defaultValue={scenario.issue.location}
                 />
               </div>
-              <div className="grid grid-cols-3 gap-3">
-                <div>
-                  <label className="label-base">Location</label>
-                  <input
-                    className="input-base"
-                    defaultValue={scenario.issue.location}
-                  />
-                </div>
-                <div>
-                  <label className="label-base">Severity</label>
-                  <select className="input-base" defaultValue={scenario.issue.severity}>
-                    <option value="low">Low</option>
-                    <option value="medium">Medium</option>
-                    <option value="high">High</option>
-                    <option value="critical">Critical</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="label-base">Discovered</label>
-                  <input
-                    className="input-base"
-                    defaultValue={formatDate(scenario.issue.discoveredAt)}
-                  />
-                </div>
+              <div>
+                <label className="label-base">Severity</label>
+                <select className="input-base" defaultValue={scenario.issue.severity}>
+                  <option value="low">Low</option>
+                  <option value="medium">Medium</option>
+                  <option value="high">High</option>
+                  <option value="critical">Critical</option>
+                </select>
+              </div>
+              <div>
+                <label className="label-base">Discovered</label>
+                <input
+                  className="input-base"
+                  defaultValue={formatDate(scenario.issue.discoveredAt)}
+                />
               </div>
             </div>
           </div>

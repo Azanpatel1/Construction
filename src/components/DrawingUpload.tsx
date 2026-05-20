@@ -22,9 +22,17 @@ interface Props {
   locationLabel?: string;
   /** Reset when scenario changes */
   resetKey?: string;
+  /** Vertical column (sidebar) or full-width banner above form fields */
+  layout?: "vertical" | "horizontal";
 }
 
-export function DrawingUpload({ locationLabel, resetKey }: Props) {
+export function DrawingUpload({
+  locationLabel,
+  resetKey,
+  layout = "vertical",
+}: Props) {
+  const sizeClass =
+    layout === "horizontal" ? "h-44 w-full" : "aspect-[4/5] w-full";
   const [drawing, setDrawing] = useState<DrawingFile | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -85,7 +93,9 @@ export function DrawingUpload({ locationLabel, resetKey }: Props) {
 
   if (drawing) {
     return (
-      <div className="aspect-[4/5] rounded-md border border-line bg-ink-850 flex flex-col overflow-hidden">
+      <div
+        className={`${sizeClass} rounded-md border border-line bg-ink-850 flex flex-col overflow-hidden`}
+      >
         <div className="flex items-center justify-between gap-2 px-3 py-2 border-b border-line bg-ink-800/40">
           <div className="flex items-center gap-1.5 min-w-0 text-xs text-muted">
             {drawing.isPdf ? (
@@ -148,7 +158,7 @@ export function DrawingUpload({ locationLabel, resetKey }: Props) {
   }
 
   return (
-    <div className="aspect-[4/5] flex flex-col">
+    <div className={`${sizeClass} flex flex-col`}>
       <input
         ref={inputRef}
         type="file"
@@ -172,7 +182,7 @@ export function DrawingUpload({ locationLabel, resetKey }: Props) {
         }}
         onDragOver={(e) => e.preventDefault()}
         onDrop={onDrop}
-        className={`flex-1 rounded-md border-2 border-dashed flex flex-col items-center justify-center gap-3 px-4 transition ${
+        className={`flex-1 rounded-md border-2 border-dashed flex flex-row sm:flex-row items-center justify-center gap-4 px-6 py-4 transition ${
           dragOver
             ? "border-gold-500/50 bg-gold-500/5"
             : "border-line bg-ink-800/30 hover:border-gold-500/30 hover:bg-ink-800/50"
