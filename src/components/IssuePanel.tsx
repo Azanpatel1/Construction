@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Play, FileImage, RotateCcw, ChevronDown } from "lucide-react";
+import { Play, RotateCcw, ChevronDown } from "lucide-react";
 import type { Constraints, Scenario } from "../lib/types";
 import { formatUSD, formatDate } from "../lib/format";
+import { DrawingUpload } from "./DrawingUpload";
 
 interface Props {
   scenario: Scenario;
@@ -21,11 +22,18 @@ export function IssuePanel({
   const [c, setC] = useState<Constraints>(initialConstraints);
   const [issueText, setIssueText] = useState<string>(scenario.issue.description);
   const [expanded, setExpanded] = useState(true);
+  const [uploadKey, setUploadKey] = useState(0);
 
   useEffect(() => {
     setC(initialConstraints);
     setIssueText(scenario.issue.description);
+    setUploadKey((k) => k + 1);
   }, [scenario.project.id, initialConstraints, scenario.issue.description]);
+
+  function handleReset() {
+    setUploadKey((k) => k + 1);
+    onReset();
+  }
 
   return (
     <div className="panel">
@@ -49,11 +57,13 @@ export function IssuePanel({
 
       {expanded && (
         <div className="p-5 space-y-5">
-          {/* Drawing thumbnail placeholder */}
           <div className="grid grid-cols-12 gap-4">
             <div className="col-span-3">
-              <label className="label-base">Drawing Reference</label>
-              <DrawingThumbnail title={scenario.issue.location} />
+              <label className="label-base">Drawing</label>
+              <DrawingUpload
+                resetKey={`${scenario.project.id}-${uploadKey}`}
+                locationLabel={scenario.issue.location}
+              />
             </div>
             <div className="col-span-9 space-y-3">
               <div>
@@ -141,7 +151,7 @@ export function IssuePanel({
 
           <div className="flex items-center justify-between pt-2">
             <button
-              onClick={onReset}
+              onClick={handleReset}
               className="btn-ghost"
               type="button"
               disabled={isAnalyzing}
@@ -236,93 +246,5 @@ function Toggle({
         }`}
       />
     </button>
-  );
-}
-
-function DrawingThumbnail({ title }: { title: string }) {
-  return (
-    <div className="aspect-[4/5] rounded-md border border-line bg-ink-800/50 p-3 flex flex-col">
-      <div className="flex items-center gap-1.5 text-xs text-muted">
-        <FileImage className="w-3 h-3" /> A-201
-      </div>
-      <div className="flex-1 grid place-items-center relative overflow-hidden">
-        {/* Decorative architectural drawing */}
-        <svg
-          viewBox="0 0 120 140"
-          className="w-full h-full opacity-90"
-          fill="none"
-        >
-          <defs>
-            <pattern
-              id="grid"
-              width="10"
-              height="10"
-              patternUnits="userSpaceOnUse"
-            >
-              <path
-                d="M 10 0 L 0 0 0 10"
-                fill="none"
-                stroke="#E5E2DC"
-                strokeWidth="0.5"
-              />
-            </pattern>
-          </defs>
-          <rect width="120" height="140" fill="url(#grid)" />
-          {/* Floor plate outline */}
-          <rect
-            x="18"
-            y="22"
-            width="84"
-            height="96"
-            stroke="#8A8580"
-            strokeWidth="1"
-            fill="rgba(250,249,247,0.8)"
-          />
-          {/* Columns */}
-          {[28, 48, 68, 88].map((x) => (
-            <g key={x}>
-              <rect x={x - 2} y="30" width="4" height="4" fill="#8A8580" />
-              <rect x={x - 2} y="56" width="4" height="4" fill="#8A8580" />
-              <rect x={x - 2} y="82" width="4" height="4" fill="#8A8580" />
-              <rect x={x - 2} y="108" width="4" height="4" fill="#8A8580" />
-            </g>
-          ))}
-          {/* Misaligned columns highlighted */}
-          <g>
-            <rect x="52" y="54" width="4" height="4" fill="#C45C4A" />
-            <rect x="72" y="54" width="4" height="4" fill="#C45C4A" />
-            <circle
-              cx="64"
-              cy="56"
-              r="12"
-              stroke="#C45C4A"
-              strokeWidth="1"
-              fill="none"
-              strokeDasharray="2 2"
-            />
-            <line
-              x1="64"
-              y1="56"
-              x2="98"
-              y2="40"
-              stroke="#C45C4A"
-              strokeWidth="0.5"
-            />
-            <text
-              x="100"
-              y="40"
-              fill="#C45C4A"
-              fontSize="5"
-              fontFamily="monospace"
-            >
-              Δ 18&quot;
-            </text>
-          </g>
-        </svg>
-      </div>
-      <div className="text-xs text-muted truncate">
-        {title}
-      </div>
-    </div>
   );
 }
